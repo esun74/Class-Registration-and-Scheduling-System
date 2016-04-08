@@ -63,5 +63,5 @@ public class Course {
     public boolean isEmpty() { return roster.isEmpty(); }
     
     @Override
-    public String toString() { return getCourseName() + " in room " + classRoom.getRoomNumber() + " at " + getTime(); }
+    public String toString() { return getCourseName() + " in room " + classRoom.getRoomNumber() + " at " + ((getTime() > 12) ? getTime() - 12 : getTime()); }
 }

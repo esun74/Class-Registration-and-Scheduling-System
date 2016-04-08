@@ -41,6 +41,7 @@ public class Student {
     
     // basic sets and gets making sure the names are all alphabetic
     public void setFirstName(String name) {
+        if (name.length() < 1) throw new IllegalArgumentException("You didn't enter anything for the name, did you?");
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isAlphabetic(name.charAt(i)))
                 throw new IllegalArgumentException("First name has to consist of alphabetic characters.");
@@ -48,6 +49,7 @@ public class Student {
         this.firstName = name;
     }
     public void setLastName(String name) {
+        if (name.length() < 1) throw new IllegalArgumentException("You didn't enter anything for the last name!");
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isAlphabetic(name.charAt(i)))
                 throw new IllegalArgumentException("Last name has to consist of alphabetic characters.");
@@ -89,6 +91,6 @@ public class Student {
     
     @Override
     public String toString() {
-        return String.format("%-10s %-10s %15s", this.getFirstName(), this.getLastName(), this.getPhoneNumber());
+        return String.format("%-10s %-10s", this.getFirstName(), this.getLastName());
     }
 }

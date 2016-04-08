@@ -7,7 +7,6 @@ package ecrss;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.swing.*;
 /**
  *
  * @author user
@@ -17,7 +16,7 @@ public class Control {
     private ArrayList<Course> courses = new ArrayList();
     private ArrayList<Student> students = new ArrayList();
     private final Scanner input = new Scanner(System.in);
-    private final int bufferSize = 1024;
+    private final int bufferSize = 2048;
     
     // no argument constructor
     Control() {
@@ -26,10 +25,14 @@ public class Control {
         students = new ArrayList();
     }
     
+    public ArrayList<Course> getCourses() { return courses; }
+    public ArrayList<Room> getRooms() { return rooms; }
+    public ArrayList<Student> getStudents() { return students; }
+    
     public Object[] returnNameStrings(int type) {
         ArrayList<String> returnArray = new ArrayList<>();
         switch(type) {
-            case 1: for (Course c : courses) returnArray.add(c.getCourseName());
+            case 1: for (Course c : courses) returnArray.add(String.format("%s%s%d%s%d", c.getCourseName(), " in room ", c.getRoomNumber(), " at ", (c.getTime() > 12)? c.getTime() - 12 : c.getTime()));
                 break;
             case 2: for (Room r : rooms) returnArray.add("Room " + r.getRoomNumber());
                 break;
@@ -39,6 +42,8 @@ public class Control {
         }
         return returnArray.toArray();
     }
+    
+    
     public Object[] returnNameStringsOfObject(int type, int index) {
         ArrayList<String> returnArray = new ArrayList<>();
         switch(type) {
@@ -60,6 +65,24 @@ public class Control {
         }
         return returnArray.toArray();
     }
+    
+    // for the "all items" popup
+    public ArrayList<String> returnStringArray(int type) {
+        ArrayList<String> returnArray = new ArrayList<>();
+        switch(type) {
+            case 1: 
+                for (Course c : courses) {
+                    returnArray.add(c.getCourseName() + " - " + c.getRoomNumber() + " - " + c.getTime() + "\r\n");
+                    for (Student s : c.getRoster())
+                        returnArray.add(s.getFirstName() + " " + s.getLastName() + "\r\n");
+                    returnArray.add("\r\n");
+                }
+                break;
+            default: throw new IllegalArgumentException("returnStringArray does not have a valid input");
+        }
+        return returnArray;
+    }
+    
     public void addClass(String className, int indexOfClassRoom, int classTime) {
         for (Course c : courses)
             if (c.getCourseName().equalsIgnoreCase(className)) 
@@ -325,37 +348,5 @@ public class Control {
 
         }
         catch(IOException exception) { System.out.println("Error writing to file '"+ fileName + "'"); }
-    }
-    public int askUser(String... options) {
-        String askUser = "";
-        int i = 1;
-        for (String s : options) {
-            askUser += String.format("%d. \t%s%n", i, s);
-            i++;
-        }
-        int response = numberInputValidation(askUser);
-        if (response > options.length || response < 1) throw new IllegalArgumentException("Response is not a valid choice."); 
-        return response;
-    }
-    public int numberInputValidation(String inputDialog) {
-        String userStringResponse = JOptionPane.showInputDialog(inputDialog);
-        int userIntegerResponse = Integer.parseInt(userStringResponse);
-        System.out.println("User entered " + userIntegerResponse);
-        return userIntegerResponse;
-    }
-    public ArrayList<String> returnStringArray(int type) {
-        ArrayList<String> returnArray = new ArrayList<>();
-        switch(type) {
-            case 1: 
-                for (Course c : courses) {
-                    returnArray.add(c.getCourseName() + " - " + c.getRoomNumber() + " - " + c.getTime() + "\r\n");
-                    for (Student s : c.getRoster())
-                        returnArray.add(s.getFirstName() + " " + s.getLastName() + "\r\n");
-                    returnArray.add("\r\n");
-                }
-                break;
-            default: throw new IllegalArgumentException("returnStringArray does not have a valid input");
-        }
-        return returnArray;
     }
 }
