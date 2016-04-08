@@ -6,6 +6,7 @@
 package ecrss;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 /**
  *
@@ -40,47 +41,8 @@ public class Control {
                 break;
             default: throw new IllegalArgumentException("returnNameStrings does not refer to a class, room, or student.");
         }
+        Collections.sort(returnArray);
         return returnArray.toArray();
-    }
-    
-    
-    public Object[] returnNameStringsOfObject(int type, int index) {
-        ArrayList<String> returnArray = new ArrayList<>();
-        switch(type) {
-            case 1: // course - student
-                for (Student s : courses.get(index).getRoster()) returnArray.add(s.getFirstName() + " " + s.getLastName());
-                break;
-            case 2: // student - course
-                for (Course c : students.get(index).getClasses()) returnArray.add(c.getCourseName());
-                break;
-            case 3: // rooms - classes
-                for (Course c : rooms.get(index).getClasses()) returnArray.add(c.getCourseName());
-                break;
-            case 4: // time - classes
-                for (Course c : courses) 
-                    if (index + 9 == c.getTime())
-                        returnArray.add(c.getCourseName());
-                break;
-            default: throw new IllegalArgumentException("returnNameStringsOfObject does not have a valid input");
-        }
-        return returnArray.toArray();
-    }
-    
-    // for the "all items" popup
-    public ArrayList<String> returnStringArray(int type) {
-        ArrayList<String> returnArray = new ArrayList<>();
-        switch(type) {
-            case 1: 
-                for (Course c : courses) {
-                    returnArray.add(c.getCourseName() + " - " + c.getRoomNumber() + " - " + c.getTime() + "\r\n");
-                    for (Student s : c.getRoster())
-                        returnArray.add(s.getFirstName() + " " + s.getLastName() + "\r\n");
-                    returnArray.add("\r\n");
-                }
-                break;
-            default: throw new IllegalArgumentException("returnStringArray does not have a valid input");
-        }
-        return returnArray;
     }
     
     public void addClass(String className, int indexOfClassRoom, int classTime) {

@@ -74,19 +74,15 @@ public class ecrssFrame extends JFrame {
         updatePanels(1, 0, 0);
 
     }
-
-    
     public final ArrayList<String> array_To_ArrayList(String[] strings) {
         return new ArrayList<>(java.util.Arrays.asList(strings));
     }
-    
     public void createLabel(String labelString, Box destination) {
         JLabel label = new JLabel(labelString);
         label.setPreferredSize(new Dimension(150, 20));
         destination.add(label);
         destination.add(Box.createVerticalStrut(20));
     }
-    
     public void standardFormat(String title1, String title2, JList display, JButton button, JComponent... components) {
         clearPanel(centralPanel);
         clearPanel(easternPanel);
@@ -124,7 +120,6 @@ public class ecrssFrame extends JFrame {
         centralPanel.add(secondaryBox);
         easternPanel.add(tertiaryBox);
     }
-
     public void doubleListFormatTemplate(String title1, String title2, JList display1, JList display2) {
         clearPanel(centralPanel);
         clearPanel(easternPanel);
@@ -160,8 +155,6 @@ public class ecrssFrame extends JFrame {
         centralPanel.add(secondaryBox);
         easternPanel.add(tertiaryBox);
     }
-    
-    
     public final void updatePanels(int primaryMenuChoice, int secondaryMenuChoice, int tertiaryMenuChoice) {
         
         if (primaryMenuChoice != currentPrimaryMenu)
@@ -346,7 +339,10 @@ public class ecrssFrame extends JFrame {
                             @Override
                             public void actionPerformed(ActionEvent event) {
                                 if (deleteRoomList.getSelectedIndex() == -1) return;
-                                    program.deleteRoom(program.getRooms().indexOf(deletableRooms.get(deleteRoomList.getSelectedIndex())));
+                                    program.deleteRoom(
+                                            program.getRooms().indexOf(
+                                                    deletableRooms.get(
+                                                            deleteRoomList.getSelectedIndex())));
                                 updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
                             }
                         });
@@ -436,12 +432,14 @@ public class ecrssFrame extends JFrame {
                         final JList selectionList1 = new JList(program.returnNameStrings(SELECT_COURSES));
                         selectionList1.addListSelectionListener(new ListSelectionListener() {
                             @Override public void valueChanged(ListSelectionEvent event) {
-                                doubleListFormat("Courses", "Students", selectionList1,
+                                doubleListFormat(
+                                        "Courses", 
+                                        "Students", 
+                                        selectionList1,
                                         new JList(
-                                                program.getCourses() // from selected course
-                                                        .get(selectionList1.getSelectedIndex())
-                                                        .getRoster() // get students in that course
-                                                        .toArray()
+                                                program.getCourses().get(
+                                                        selectionList1.getSelectedIndex()
+                                                ).getRoster().toArray()
                         ));}}); 
                         doubleListFormat("Courses", "Students", selectionList1, new JList());
                         break;
@@ -449,12 +447,14 @@ public class ecrssFrame extends JFrame {
                         final JList selectionList2 = new JList(program.returnNameStrings(SELECT_STUDENTS));
                         selectionList2.addListSelectionListener(new ListSelectionListener() {
                             @Override public void valueChanged(ListSelectionEvent event) {
-                                doubleListFormat("Students", "Courses", selectionList2,
+                                doubleListFormat(
+                                        "Students", 
+                                        "Courses", 
+                                        selectionList2, 
                                         new JList(
-                                                program.getStudents() // from selected student
-                                                        .get(selectionList2.getSelectedIndex())
-                                                        .getClasses()// get all courses the student is taking
-                                                        .toArray()
+                                                program.getStudents().get(
+                                                        selectionList2.getSelectedIndex()
+                                                ).getClasses().toArray()
                         ));}}); 
                         doubleListFormat("Students", "Courses", selectionList2, new JList());
                         break;
@@ -462,13 +462,15 @@ public class ecrssFrame extends JFrame {
                         final JList selectionList3 = new JList(program.returnNameStrings(SELECT_ROOMS));
                         selectionList3.addListSelectionListener(new ListSelectionListener() {
                             @Override public void valueChanged(ListSelectionEvent event) {
-                                doubleListFormat("Rooms", "Courses", selectionList3,
+                                doubleListFormat(
+                                        "Rooms", 
+                                        "Courses", 
+                                        selectionList3,
                                         new JList(
-                                                program.getRooms() // from selected room
-                                                        .get(selectionList3.getSelectedIndex())
-                                                        .getClasses()// get all courses the room is hosting
-                                                        .toArray()
-                        ));}}); 
+                                                program.getRooms().get(
+                                                        selectionList3.getSelectedIndex()
+                                                ).getClasses().toArray()
+                        ));}});
                         doubleListFormat("Rooms", "Courses", selectionList3, new JList());
                         break;
                     case 4: // time - classes
@@ -493,10 +495,6 @@ public class ecrssFrame extends JFrame {
         currentPrimaryMenu = primaryMenuChoice;
         currentSecondaryMenu = secondaryMenuChoice;
     }
-    
-    
-    
-    
     public void initializeWesternPanel(int primaryMenuChoice) {
         clearPanel(westernPanel);
         clearPanel(easternPanel);
@@ -560,13 +558,10 @@ public class ecrssFrame extends JFrame {
 
         westernPanel.add(primaryBox);
     }
-    
     public void clearPanel(JPanel panel) {
         //System.out.println("Cleared " + panel.getName());
         panel.removeAll();
         panel.revalidate();
         panel.repaint();
-    }
-    
+    }   
 }
-
