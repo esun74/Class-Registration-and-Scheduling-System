@@ -17,13 +17,13 @@ You can:
   
   view the data by
   
-    a student's courses
-    
-    a class's students
-    
-    a room's courses
-    
-    all classes at a certain time
+  -a student's courses
+
+  -a class's students
+
+  -a room's courses
+
+  -all classes at a certain time
     
     
 
