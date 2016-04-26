@@ -3,27 +3,8 @@ Class scheduling system in Java. Includes a GUI.
 
 Manages Courses, Rooms, and Students. 
 
-Control.java contains most of the application logic, and ECRSSFrame holds most of the GUI implementation. 
+Project report: 
+<a href="https://docs.google.com/document/d/1TjVZ_T4VzAy1ckJcahayZybFsDqEj07iPHhZM90EKe0/edit?usp=sharing"> link here </a>
 
-You can: 
-
-  Add/delete classes
-  
-  Add/delete rooms
-  
-  Add/delete Students
-  
-  Enroll/drop students to/from classes
-  
-  view the data by
-  
-  -a student's courses
-
-  -a class's students
-
-  -a room's courses
-
-  -all classes at a certain time
-    
     
 
