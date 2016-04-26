@@ -9,11 +9,11 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class Student {
+public class Student implements java.io.Serializable {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private ArrayList<Course> classes;
+    private final ArrayList<Course> classes;
     
     Student(String firstname, String lastname, String phonenumber) {
         this.setFirstName(firstname);
@@ -40,25 +40,33 @@ public class Student {
     public void removeClass(Course c) { classes.remove(c); if (c.containsStudent(this)) c.removeStudent(this); }
     
     // basic sets and gets making sure the names are all alphabetic
-    public void setFirstName(String name) {
+    public final void setFirstName(String name) {
         if (name.length() < 1) throw new IllegalArgumentException("You didn't enter anything for the name, did you?");
+
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isAlphabetic(name.charAt(i)))
                 throw new IllegalArgumentException("First name has to consist of alphabetic characters.");
         }
-        this.firstName = name;
+        char[] nameArray = name.toCharArray();
+        nameArray[0] = Character.toUpperCase(nameArray[0]);
+        
+        this.firstName = new String(nameArray);
     }
-    public void setLastName(String name) {
+    public final void setLastName(String name) {
         if (name.length() < 1) throw new IllegalArgumentException("You didn't enter anything for the last name!");
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isAlphabetic(name.charAt(i)))
                 throw new IllegalArgumentException("Last name has to consist of alphabetic characters.");
         }
-        this.lastName = name;
+        
+        char[] nameArray = name.toCharArray();
+        nameArray[0] = Character.toUpperCase(nameArray[0]);
+        
+        this.lastName = new String(nameArray);
     }
     
     // same thing but with digits
-    public void setPhoneNumber(String number) {
+    public final void setPhoneNumber(String number) {
         if (number.length() != 10) throw new IllegalArgumentException("Phone number has to have 10 digits");
         for(int i = 0; i < number.length(); i++)
             if (!Character.isDigit(number.charAt(i))) 
@@ -83,14 +91,10 @@ public class Student {
     // checks if the student has class c
     public boolean hasClass(Course c) { return this.classes.contains(c); }
     
-    // prints all the classes the student has
-    // to do: say that there are no classes if there are none,
-    public ArrayList<Course> getClasses() {
-        return this.classes;
-    }
+    public ArrayList<Course> getClasses() { return this.classes;}
     
     @Override
     public String toString() {
-        return String.format("%-10s %-10s", this.getFirstName(), this.getLastName());
+        return String.format("%s, %s", this.getFirstName(), this.getLastName());
     }
 }

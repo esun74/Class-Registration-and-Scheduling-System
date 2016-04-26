@@ -9,29 +9,31 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class Course {
+public class Course implements java.io.Serializable {
     private String courseName;
     private int time;
-    private Room classRoom;
-    private ArrayList<Student> roster;
+    private final Room classRoom;
+    private final ArrayList<Student> roster;
     
     
     Course(String courseName, Room classroom, int time) { 
         setCourseName(courseName);
         setTime(time);
         this.classRoom = classroom;
-        classroom.addCourse(this);
         roster = new ArrayList();
+        informClassRoom(classroom); 
     }
     
-    public void setCourseName(String name) {
+    public final void informClassRoom(Room classroom) { classroom.addCourse(this); }
+    
+    public final void setCourseName(String name) {
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isLetterOrDigit(name.charAt(i)) && !Character.isSpaceChar(name.charAt(i)))
                 throw new IllegalArgumentException("Course name has to consist of alphabetic characters. Input was: " + name);
         }
         this.courseName = name;
     }
-    public void setTime(int time) { this.time = time; }
+    public final void setTime(int time) { this.time = time; }
     
     public String getCourseName() { return this.courseName;}
     public int getTime() { return this.time; }

@@ -9,11 +9,11 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class Room {
+public class Room implements java.io.Serializable {
     private int roomNumber;
     
-    private ArrayList<Course> classes;
-    private boolean[] timeBooked;
+    private final ArrayList<Course> classes;
+    private final boolean[] timeBooked;
     
     
     Room(int roomNumber) {
@@ -24,7 +24,7 @@ public class Room {
     }
 
     // sets room number, checks if negative
-    public void setRoomNumber(int roomNumber) {
+    public final void setRoomNumber(int roomNumber) {
         if (roomNumber < 0) throw new IllegalArgumentException("Room number is negative?");
         this.roomNumber = roomNumber;
     }

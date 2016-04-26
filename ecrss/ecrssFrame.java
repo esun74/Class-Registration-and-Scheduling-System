@@ -10,12 +10,13 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.io.*;
 /**
  *
  * @author user
  */
 public class ecrssFrame extends JFrame {
-    private final Control program = new Control();
+    private Control program = new Control();
     private final JPanel westernPanel = new JPanel();
     private final JPanel centralPanel = new JPanel();
     private final JPanel easternPanel = new JPanel();
@@ -59,11 +60,23 @@ public class ecrssFrame extends JFrame {
     
     private int currentPrimaryMenu;
     private int currentSecondaryMenu;
+    
     ecrssFrame() {
         super("Eric's ECRSS");
+        /*
+        // for convenience
+        if (JOptionPane.showConfirmDialog(null, "Do you want to load some test data?", "Auto-Load 2000", JOptionPane.YES_NO_OPTION)
+                == JOptionPane.OK_OPTION) 
+            program.fileInitialization();
+        */
+        // some code from Professor Ibrahim
+        Toolkit tool = Toolkit.getDefaultToolkit();
+        Dimension screenSize = tool.getScreenSize();
+        int screenH = screenSize.height;
+        int screenW = screenSize.width;
+        this.setLocation(screenW/4, screenH/4); 
         
-        program.fileInitialization();
-        
+        // sets the panels
         westernPanel.setName("Western Panel");
         centralPanel.setName("Central Panel");
         easternPanel.setName("Eastern Panel");
@@ -71,26 +84,37 @@ public class ecrssFrame extends JFrame {
         add(centralPanel, BorderLayout.CENTER);
         add(easternPanel, BorderLayout.EAST);
         
-        updatePanels(1, 0, 0);
+        
+        updatePanels(1, 0);
 
     }
+    
+    // converts arrays to ArrayLists (String)
     public final ArrayList<String> array_To_ArrayList(String[] strings) {
         return new ArrayList<>(java.util.Arrays.asList(strings));
     }
+    
+    // creates the descriptive labels on the top of the box
     public void createLabel(String labelString, Box destination) {
         JLabel label = new JLabel(labelString);
         label.setPreferredSize(new Dimension(150, 20));
         destination.add(label);
         destination.add(Box.createVerticalStrut(20));
     }
+    
+    // standard format of a list on the left and options on the right
     public void standardFormat(String title1, String title2, JList display, JButton button, JComponent... components) {
+        
+        // start with a clean slate
         clearPanel(centralPanel);
         clearPanel(easternPanel);
         secondaryBox.removeAll();
         tertiaryBox.removeAll();
         
+        // creates the label
         createLabel(title1, secondaryBox);
 
+        // sets up the list and adds it
         display.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         display.setFixedCellWidth(100);
         display.setVisibleRowCount(7);
@@ -98,11 +122,14 @@ public class ecrssFrame extends JFrame {
 
         //---------------------------------------
 
+        // creates the second label
         createLabel(title2, tertiaryBox);
         
+        // sets all of them to be a uniform size
         for (JComponent c : components)
             c.setPreferredSize(new Dimension(100, 20));
         
+        // adds them into boxes in pairs
         Box[] componentBox = new Box[components.length / 2];
         for (int i = 0; i < components.length / 2; i++) {
             componentBox[i] = new Box(BoxLayout.LINE_AXIS);
@@ -110,17 +137,24 @@ public class ecrssFrame extends JFrame {
             componentBox[i].add(components[2 * i + 1]);
         }
 
+        // adds the boxes
         for (int i = 0; i < components.length / 2; i++) {
             tertiaryBox.add(componentBox[i]);
             tertiaryBox.add(Box.createVerticalStrut(20));
         }
         
+        // adds the button that does things
         tertiaryBox.add(button);
         
+        // adds the boxes to their panels
         centralPanel.add(secondaryBox);
         easternPanel.add(tertiaryBox);
     }
+    
+    // format with two lists
     public void doubleListFormatTemplate(String title1, String title2, JList display1, JList display2) {
+        
+        // clears things
         clearPanel(centralPanel);
         clearPanel(easternPanel);
         secondaryBox.removeAll();
@@ -128,6 +162,7 @@ public class ecrssFrame extends JFrame {
         
         createLabel(title1, secondaryBox);
 
+        // basically sets up lists
         display1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         display1.setFixedCellWidth(100);
         display1.setFixedCellHeight(18);
@@ -144,26 +179,157 @@ public class ecrssFrame extends JFrame {
         tertiaryBox.add(new JScrollPane(display2));
 
     }
+    
+    // without a button
     public void doubleListFormat(String title1, String title2, JList display1, JList display2) {
         doubleListFormatTemplate(title1, title2, display1, display2);
         centralPanel.add(secondaryBox);
         easternPanel.add(tertiaryBox);
     }
+    
+    // with a button
     public void doubleListFormat(String title1, String title2, JList display1, JList display2, JButton button) {
         doubleListFormatTemplate(title1, title2, display1, display2);
         tertiaryBox.add(button);   
         centralPanel.add(secondaryBox);
         easternPanel.add(tertiaryBox);
     }
-    public final void updatePanels(int primaryMenuChoice, int secondaryMenuChoice, int tertiaryMenuChoice) {
+    
+    // updates the panels
+    public final void updatePanels(int primaryMenuChoice, int secondaryMenuChoice) {
         
-        if (primaryMenuChoice != currentPrimaryMenu)
-            initializeWesternPanel(primaryMenuChoice);
+        // if the user changes the left menu (add/delete/display)
+        if (primaryMenuChoice != currentPrimaryMenu) {
+            clearPanel(westernPanel);
+            clearPanel(easternPanel);
+            clearPanel(centralPanel);
+
+            // empties the box and puts in the combobox
+            primaryBox.removeAll();
+            primaryMenu = new JComboBox(primaryMenuStrings);
+            primaryMenu.setSelectedItem(primaryMenuStrings[primaryMenuChoice - 1]);
+            primaryMenu.setPreferredSize(new Dimension(150, 25));
+            //System.out.println("Added primaryMenu");
+            primaryBox.add(primaryMenu);
+            primaryBox.add(Box.createVerticalStrut(20));
+            // what to do if an element in the combobox is selected
+            primaryMenu.addItemListener(
+                new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent event) {
+                        if (event.getStateChange() == ItemEvent.SELECTED) {
+                            //System.out.println("primaryMenu updated panel - " + (array_To_ArrayList(primaryMenuStrings).indexOf(event.getItem()) + 1) + " " + 0 + " " + 0);
+                            updatePanels((array_To_ArrayList(primaryMenuStrings).indexOf(event.getItem()) + 1), 0);
+                        }
+                    }
+                }
+            );
+
+            // determines what to put in the left list
+            switch(primaryMenuChoice) {
+                case 1: secondaryMenu = new JList(addMenuStrings);
+                    break;
+                case 2: secondaryMenu = new JList(deleteMenuStrings);
+                    break;
+                case 3: secondaryMenu = new JList(displayMenuStrings);
+                    break;
+                default: throw new IllegalArgumentException("secondaryMenuChoice is not valid");
+            }
+
+            secondaryMenu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            secondaryMenu.setFixedCellWidth(150);
+            //System.out.println("Added secondaryMenu");
+            primaryBox.add(secondaryMenu);
+            secondaryMenu.addListSelectionListener(
+                new ListSelectionListener() {
+                    @Override
+                    public void valueChanged(ListSelectionEvent event) {
+                        if (event.getValueIsAdjusting()) {
+                            //System.out.println("secondaryMenu updated panel - " + currentPrimaryMenu + " " + (secondaryMenu.getSelectedIndex() + 1) + " " + 0);
+                            updatePanels(currentPrimaryMenu, (secondaryMenu.getSelectedIndex() + 1));
+                        }
+                    } 
+                }
+            );
+            
+            // creates the save and load button
+            final JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Serialized Objects", "ser"));
+            JButton loadButton = new JButton("Load");
+            JButton saveButton = new JButton("Save");
+
+            // LOAD LOAD LOAD LOAD LOAD LOAD LOAD LOAD
+            loadButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent event) {
+                    // if the user presses "open" then run this
+                    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            FileInputStream ifstream = new FileInputStream(chooser.getSelectedFile().getPath());
+                            ObjectInputStream fInput = new ObjectInputStream (ifstream);
+                            Object thing = fInput.readObject();
+                            if (thing instanceof Control) program = (Control) thing;
+                            else { JOptionPane.showMessageDialog(null, "Class is not of type Control."); }
+                        }
+                        catch (FileNotFoundException e) { 
+                            JOptionPane.showMessageDialog(null, "File not found.");
+                        }
+                        catch (ClassNotFoundException e) {
+                            JOptionPane.showMessageDialog(null, "A class cannot be found.");
+                        }
+                        catch (IOException e) {
+                            JOptionPane.showMessageDialog(null, "Incompatible File, please try again.");
+                            System.out.println(e.fillInStackTrace());
+                        }
+                    }
+                    
+                    // refresh
+                    updatePanels(currentPrimaryMenu, currentSecondaryMenu);
+
+                }
+            });
+            
+            // SAVE SAVE SAVE SAVE SAVE SAVE SAVE SAVE
+            saveButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent event) {
+                    try {
+                        // if no file is selected yet, ask user - if user does not choose a file, do nothing
+                        if (chooser.getSelectedFile() == null) 
+                            if (chooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) return;
+
+                        // write control into file
+                        FileOutputStream ofstream = new FileOutputStream(chooser.getSelectedFile().getPath());
+                        ObjectOutputStream fOutput = new ObjectOutputStream (ofstream);
+                        fOutput.writeObject(program);
+                    }
+                    catch(FileNotFoundException e) {
+                            JOptionPane.showMessageDialog(null, "File not found??");
+                    }
+                    catch(IOException e) {
+                            JOptionPane.showMessageDialog(null, "IOException thrown. (save button)");
+                            System.out.println(e.fillInStackTrace());
+                    }
+                }
+            });
+            primaryBox.add(Box.createVerticalStrut(30));
+            
+            // creates a box for the save and load buttons
+            Box saveloadBox = new Box(BoxLayout.LINE_AXIS);
+            saveloadBox.add(loadButton);
+            saveloadBox.add(Box.createHorizontalStrut(5));
+            saveloadBox.add(saveButton);
+            primaryBox.add(saveloadBox);
+
+            westernPanel.add(primaryBox);
+        }
         else {
             clearPanel(easternPanel);
             clearPanel(centralPanel);
         }
         
+        // a lot of this is copy and paste but I can't really do anything since 
+        // I can't pass listeners into a method without being able to access the textfields and lists  and stuff
+        // switch between add/delete/display
         switch(primaryMenuChoice) {
             case 1: // add
                 switch(secondaryMenuChoice) {
@@ -180,13 +346,14 @@ public class ecrssFrame extends JFrame {
                             @Override
                             public void actionPerformed(ActionEvent event) {
                                 if (classNameField.getText().equals("")) return;
+                                if (classRoomCbBox.getSelectedIndex() == -1) return;
                                 try {
                                     program.addClass(classNameField.getText(), classRoomCbBox.getSelectedIndex(), classTimeCbBox.getSelectedIndex() + 9);
                                 }
                                 catch (IllegalArgumentException exception){
                                     JOptionPane.showMessageDialog(centralPanel, exception.getMessage(), "Error!", JOptionPane.WARNING_MESSAGE);
                                 }
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         
@@ -218,7 +385,7 @@ public class ecrssFrame extends JFrame {
                                 catch (IllegalArgumentException exception) {
                                     JOptionPane.showMessageDialog(centralPanel, exception.getMessage(), "Error!", JOptionPane.WARNING_MESSAGE);
                                 }
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         standardFormat(
@@ -244,7 +411,7 @@ public class ecrssFrame extends JFrame {
                                     JOptionPane.showMessageDialog(centralPanel, exception.getMessage(), "Error!", JOptionPane.WARNING_MESSAGE);
                                 }
                                     
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         standardFormat(
@@ -286,10 +453,16 @@ public class ecrssFrame extends JFrame {
                                 for (int i : addThisStudentList.getSelectedIndices()) { studentsToAdd.add(possibleStudents.get(i)); }
                                 for (Student s : studentsToAdd) {program.addStudentToClass(program.getStudents().indexOf(s), addToClassList.getSelectedIndex());}
                                 
-                                int temp = addToClassList.getSelectedIndex();
-                                addToClassList.setSelectedIndex(1);
-                                addToClassList.setSelectedIndex(0);
-                                addToClassList.setSelectedIndex(temp);
+                                possibleStudents.removeAll(program.getStudents());
+                                for (Student s : program.getStudents()) {
+                                    boolean timeConflict = false;
+                                    // check if the student has a class at the same time
+                                    for (Course c : s.getClasses())
+                                        if (c.getTime() == program.getCourses().get(addToClassList.getSelectedIndex()).getTime())
+                                            timeConflict = true;
+                                    if (!timeConflict) possibleStudents.add(s);
+                                }
+                                addThisStudentList.setListData(possibleStudents.toArray());
                             }
                         });
                         doubleListFormat(
@@ -320,7 +493,7 @@ public class ecrssFrame extends JFrame {
                             public void actionPerformed(ActionEvent event) {
                                 if (deleteClassList.getSelectedIndex() == -1) return;
                                     program.deleteClass(program.getCourses().indexOf(deletableCourses.get(deleteClassList.getSelectedIndex())));
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         standardFormat(
@@ -343,7 +516,7 @@ public class ecrssFrame extends JFrame {
                                             program.getRooms().indexOf(
                                                     deletableRooms.get(
                                                             deleteRoomList.getSelectedIndex())));
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         standardFormat(
@@ -369,7 +542,7 @@ public class ecrssFrame extends JFrame {
                                                 )
                                         )
                                 );
-                                updatePanels(currentPrimaryMenu, currentSecondaryMenu, 0);
+                                updatePanels(currentPrimaryMenu, currentSecondaryMenu);
                             }
                         });
                         standardFormat(
@@ -405,10 +578,13 @@ public class ecrssFrame extends JFrame {
                                 
                                 // updates the lists in a very roundabout way
                                 // but it works! ¯\_(ツ)_/¯
-                                int temp = removeFromClassList.getSelectedIndex();
-                                removeFromClassList.setSelectedIndex(1);
-                                removeFromClassList.setSelectedIndex(0);
-                                removeFromClassList.setSelectedIndex(temp);
+                                enrolledStudents.removeAll(program.getStudents());
+                                enrolledStudents.addAll(
+                                        program.getCourses().get(
+                                                removeFromClassList.getSelectedIndex()
+                                        ).getRoster()
+                                );
+                                removeThisStudentList.setListData(enrolledStudents.toArray());
                             }
                         });
                         doubleListFormat(
@@ -495,69 +671,8 @@ public class ecrssFrame extends JFrame {
         currentPrimaryMenu = primaryMenuChoice;
         currentSecondaryMenu = secondaryMenuChoice;
     }
-    public void initializeWesternPanel(int primaryMenuChoice) {
-        clearPanel(westernPanel);
-        clearPanel(easternPanel);
-        clearPanel(centralPanel);
-        
-        primaryBox.removeAll();
-        primaryMenu = new JComboBox(primaryMenuStrings);
-        primaryMenu.setSelectedItem(primaryMenuStrings[primaryMenuChoice - 1]);
-        primaryMenu.setPreferredSize(new Dimension(150, 25));
-        //System.out.println("Added primaryMenu");
-        primaryBox.add(primaryMenu);
-        primaryBox.add(Box.createVerticalStrut(20));
-        // what to do if an element in the combobox is selected
-        primaryMenu.addItemListener(
-            new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    if (event.getStateChange() == ItemEvent.SELECTED) {
-                        //System.out.println("primaryMenu updated panel - " + (array_To_ArrayList(primaryMenuStrings).indexOf(event.getItem()) + 1) + " " + 0 + " " + 0);
-                        updatePanels((array_To_ArrayList(primaryMenuStrings).indexOf(event.getItem()) + 1), 0, 0);
-                    }
-                }
-            }
-        );
-
-
-
-        switch(primaryMenuChoice) {
-            case 1: secondaryMenu = new JList(addMenuStrings);
-                break;
-            case 2: secondaryMenu = new JList(deleteMenuStrings);
-                break;
-            case 3: secondaryMenu = new JList(displayMenuStrings);
-                break;
-            default: throw new IllegalArgumentException("secondaryMenuChoice is not valid");
-        }
-        
-        secondaryMenu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        secondaryMenu.setFixedCellWidth(150);
-        //System.out.println("Added secondaryMenu");
-        primaryBox.add(secondaryMenu);
-        secondaryMenu.addListSelectionListener(
-            new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent event) {
-                    if (event.getValueIsAdjusting()) {
-                        //System.out.println("secondaryMenu updated panel - " + currentPrimaryMenu + " " + (secondaryMenu.getSelectedIndex() + 1) + " " + 0);
-                        updatePanels(currentPrimaryMenu, (secondaryMenu.getSelectedIndex() + 1), 0);
-                    }
-                } 
-            }
-        );
-        JButton saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent event) {
-                program.fileUpdate();
-            }
-        });
-        primaryBox.add(Box.createVerticalStrut(30));
-        primaryBox.add(saveButton);
-
-        westernPanel.add(primaryBox);
-    }
+    
+    // clears a particular panel
     public void clearPanel(JPanel panel) {
         //System.out.println("Cleared " + panel.getName());
         panel.removeAll();

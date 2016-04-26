@@ -12,12 +12,11 @@ import java.util.Scanner;
  *
  * @author user
  */
-public class Control {
+public class Control implements Serializable {
     private ArrayList<Room> rooms = new ArrayList();
     private ArrayList<Course> courses = new ArrayList();
     private ArrayList<Student> students = new ArrayList();
-    private final Scanner input = new Scanner(System.in);
-    private final int bufferSize = 2048;
+    private static final long serialVersionUID = 42L;
     
     // no argument constructor
     Control() {
@@ -33,11 +32,11 @@ public class Control {
     public Object[] returnNameStrings(int type) {
         ArrayList<String> returnArray = new ArrayList<>();
         switch(type) {
-            case 1: for (Course c : courses) returnArray.add(String.format("%s%s%d%s%d", c.getCourseName(), " in room ", c.getRoomNumber(), " at ", (c.getTime() > 12)? c.getTime() - 12 : c.getTime()));
+            case 1: for (Course c : courses) returnArray.add(c.toString());
                 break;
-            case 2: for (Room r : rooms) returnArray.add("Room " + r.getRoomNumber());
+            case 2: for (Room r : rooms) returnArray.add(r.toString());
                 break;
-            case 3: for (Student s : students) returnArray.add(s.getFirstName() + " " + s.getLastName());
+            case 3: for (Student s : students) returnArray.add(s.toString());
                 break;
             default: throw new IllegalArgumentException("returnNameStrings does not refer to a class, room, or student.");
         }
@@ -72,7 +71,6 @@ public class Control {
         if (courses.get(indexOfClass).getRoster().isEmpty()) {
             for (Room r : rooms)
                 if (r.getRoomNumber() == courses.get(indexOfClass).getRoomNumber()) {
-                    System.out.println("Removed course from room and course schedule");
                     r.removeCourse(courses.get(indexOfClass)); 
                     courses.remove(indexOfClass);
                     break;
@@ -91,7 +89,20 @@ public class Control {
     public void removeStudentFromClass(int indexOfStudent, int indexOfClass) {
         students.get(indexOfStudent).removeClass(courses.get(indexOfClass));
     }
+
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+ 
+    
+    // don't really need these anymore but just in case
     public void fileInitialization() {
         classFileInitialization("classdata.txt");
         studentFileInitialization("studentdata.txt");
@@ -103,7 +114,7 @@ public class Control {
 
         // reads in the file
         try(FileInputStream inputStream = new FileInputStream(fileName);) {
-            byte[] buffer  = new byte[bufferSize];
+            byte[] buffer  = new byte[2048];
             while(inputStream.read(buffer) != -1) {
                 String fileInput = new String(buffer);
                 for(int i = 0; i < fileInput.length(); i++) {
@@ -151,7 +162,7 @@ public class Control {
     public void studentFileInitialization(String fileName) {
         final char studentMarker = ',';
         try(FileInputStream inputStream = new FileInputStream(fileName);) {
-            byte[] buffer  = new byte[bufferSize];
+            byte[] buffer  = new byte[2048];
             while(inputStream.read(buffer) != -1) {
                 String fileInput = new String(buffer);
                 for(int i = 0; i < fileInput.length(); i++) {
@@ -193,7 +204,7 @@ public class Control {
         
         // splits file into lines
         try(FileInputStream inputStream = new FileInputStream(fileName);) {
-            byte[] buffer  = new byte[bufferSize];
+            byte[] buffer  = new byte[2048];
             while(inputStream.read(buffer) != -1) {
                 String fileInput = new String(buffer);
                 for(int i = 0; i < fileInput.length(); i++) {
