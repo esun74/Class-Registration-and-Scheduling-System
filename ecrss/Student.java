@@ -95,6 +95,6 @@ public class Student implements java.io.Serializable {
     
     @Override
     public String toString() {
-        return String.format("%s, %s", this.getFirstName(), this.getLastName());
+        return String.format("%s, %s", this.getLastName(), this.getFirstName());
     }
 }

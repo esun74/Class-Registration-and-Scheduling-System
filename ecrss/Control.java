@@ -6,8 +6,7 @@
 package ecrss;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
+//import java.util.Collections;
 /**
  *
  * @author user
@@ -40,7 +39,7 @@ public class Control implements Serializable {
                 break;
             default: throw new IllegalArgumentException("returnNameStrings does not refer to a class, room, or student.");
         }
-        Collections.sort(returnArray);
+        //Collections.sort(returnArray);
         return returnArray.toArray();
     }
     
@@ -100,7 +99,7 @@ public class Control implements Serializable {
     
     
     
- 
+ /*
     
     // don't really need these anymore but just in case
     public void fileInitialization() {
@@ -322,4 +321,5 @@ public class Control implements Serializable {
         }
         catch(IOException exception) { System.out.println("Error writing to file '"+ fileName + "'"); }
     }
+*/
 }
